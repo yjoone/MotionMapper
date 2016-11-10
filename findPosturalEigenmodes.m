@@ -30,11 +30,9 @@ function [vecs,vals,meanValue] = findPosturalEigenmodes(filePath,pixels,paramete
     parameters = setRunParameters(parameters);
     
     
-    if matlabpool('size') ~= parameters.numProcessors;
-        matlabpool close force
-        if parameters.numProcessors > 1
-            matlabpool(parameters.numProcessors);
-        end
+    a = gcp();
+    if parameters.numProcessors > 1 && sum(size(a)) == 0
+        parobj = parpool;
     end
     
     
@@ -67,5 +65,5 @@ function [vecs,vals,meanValue] = findPosturalEigenmodes(filePath,pixels,paramete
     
     
     if parameters.numProcessors > 1 && parameters.closeMatPool
-        matlabpool close
+        delete(parobj);
     end

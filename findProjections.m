@@ -30,11 +30,9 @@ function projections = findProjections(filePath,vecs,meanValues,pixels,parameter
     parameters = setRunParameters(parameters);
     
     
-    if matlabpool('size') ~= parameters.numProcessors;
-        matlabpool close force
-        if parameters.numProcessors > 1
-            matlabpool(parameters.numProcessors);
-        end
+    a = gcp();
+    if parameters.numProcessors > 1 && sum(size(a)) == 0
+        parobj = parpool;
     end
     
     
@@ -69,8 +67,8 @@ function projections = findProjections(filePath,vecs,meanValues,pixels,parameter
         meanValues,pixels,thetas,numProjections,scale,batchSize);
     
         
-    if parameters.numProcessors > 1  && parameters.closeMatPool
-        matlabpool close
+    if parameters.numProcessors > 1 && parameters.closeMatPool
+        delete(parobj);
     end
     
     

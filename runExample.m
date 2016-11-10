@@ -179,7 +179,7 @@ end
 
 
 
-matlabpool close
+parpool close
 
 
 

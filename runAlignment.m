@@ -45,11 +45,9 @@ function outputStruct = runAlignment(fileName,outputPath,startImage,finalImage,p
     parameters = setRunParameters(parameters);
     
     
-    if matlabpool('size') ~= parameters.numProcessors;
-        matlabpool close force
-        if parameters.numProcessors > 1
-            matlabpool(parameters.numProcessors);
-        end
+    a = gcp();
+    if parameters.numProcessors > 1 && sum(size(a)) == 0
+        parobj = parpool;
     end
     
     
@@ -70,7 +68,7 @@ function outputStruct = runAlignment(fileName,outputPath,startImage,finalImage,p
     
     
     if parameters.numProcessors > 1 && parameters.closeMatPool
-        matlabpool close
+        delete(parobj);
     end
     
     

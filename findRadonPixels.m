@@ -32,11 +32,9 @@ function [pixels,thetas,means,stDevs,vidObjs] = findRadonPixels(filePath,numToTe
     parameters = setRunParameters(parameters);
     
     
-    if matlabpool('size') ~= parameters.numProcessors;
-        matlabpool close force
-        if parameters.numProcessors > 1
-            matlabpool(parameters.numProcessors);
-        end
+    a = gcp();
+    if parameters.numProcessors > 1 && sum(size(a)) == 0
+        parobj = parpool;
     end
     
     numThetas = parameters.num_Radon_Thetas;
@@ -80,6 +78,6 @@ function [pixels,thetas,means,stDevs,vidObjs] = findRadonPixels(filePath,numToTe
     
     
     if parameters.numProcessors > 1 && parameters.closeMatPool
-        matlabpool close
+        delete(parobj);
     end
     

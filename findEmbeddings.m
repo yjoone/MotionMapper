@@ -32,17 +32,9 @@ function [zValues,outputStatistics] = ...
     
     
     
-    % YJK 110916 edit. matlabpool has been replaced with parpool
-%     if matlabpool('size') ~= parameters.numProcessors;
-%         matlabpool close force
-%         if parameters.numProcessors > 1
-%             matlabpool(parameters.numProcessors);
-%         end
-%     end
-    if parpool('size') ~= parameters.numProcessors;
-        if parameters.numProcessors > 1
-            parpool(parameters.numProcessors);
-        end
+    a = gcp();
+    if parameters.numProcessors > 1 && sum(size(a)) == 0
+        parobj = parpool;
     end
     
     
@@ -88,6 +80,6 @@ function [zValues,outputStatistics] = ...
                                 
                                 
     
-    if parameters.numProcessors > 1  && parameters.closeMatPool
-        matlabpool close
+    if parameters.numProcessors > 1 && parameters.closeMatPool
+        delete(parobj);
     end

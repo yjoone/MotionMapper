@@ -30,11 +30,9 @@ function [trainingSetData,trainingSetAmps,projectionFiles] = ...
     parameters = setRunParameters(parameters);
     
     
-    if matlabpool('size') ~= parameters.numProcessors;
-        matlabpool close force
-        if parameters.numProcessors > 1
-            matlabpool(parameters.numProcessors);
-        end
+    a = gcp();
+    if parameters.numProcessors > 1 && sum(size(a)) == 0
+        parobj = parpool;
     end
     
     
@@ -69,6 +67,6 @@ function [trainingSetData,trainingSetAmps,projectionFiles] = ...
     
     
     
-    if parameters.numProcessors > 1  && parameters.closeMatPool
-        matlabpool close
+    if parameters.numProcessors > 1 && parameters.closeMatPool
+        delete(parobj);
     end
